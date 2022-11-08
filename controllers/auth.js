@@ -23,10 +23,6 @@ exports.registerUser = async (req, res) => {
     if (doesEmailExist) {
       throw new Error("Duplicated email");
     }
-    utilLogin.duplicateMail(req.body.email).then((ret) => {
-      if (!ret) {
-      }
-    });
     if (!utilLogin.validePassword(req.body.password))
       throw new Error("Mot de passe invalide.");
     if (!utilLogin.valideName(req.body.name)) throw new Error("Nom invalide.");
@@ -68,7 +64,7 @@ exports.registerUser = async (req, res) => {
         })
 
         .catch((error) => {
-          throw error;
+          res.status(500).json({ error: error.message });
         });
     } catch (error) {
       res.status(500).json({ error: error.message });

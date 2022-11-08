@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 require("dotenv").config();
 
@@ -12,6 +13,8 @@ mongoose
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 
 const app = express();
+
+app.use(cors());
 
 const pangolinRouter = require("./routes/pangolin");
 const scoreRouter = require("./routes/score");
