@@ -6,6 +6,9 @@ const scoreCtrl = require("../controllers/score");
 // Read ALL scores
 router.get("/", scoreCtrl.getAllScores);
 
+// Read my score
+router.get("/profil", scoreCtrl.getMyScoreById);
+
 // ShiFuMi Victories
 router.get("/victories", scoreCtrl.shifumiVictories);
 
@@ -29,5 +32,8 @@ router.get("/win3", scoreCtrl.winLevelThree);
 
 // ShiFuMi Level 3 Loose -7
 router.get("/loose3", scoreCtrl.looseLevelThree);
+
+// Read scores By ID
+router.get("/:id", scoreCtrl.getScoreById);
 
 module.exports = router;

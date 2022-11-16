@@ -1,12 +1,79 @@
 const Pangolin = require("../models/pangolin");
 const Score = require("../models/score");
+const Friend = require("../models/friends");
 const jwt = require("jsonwebtoken");
 
 // Read ALL scores
 exports.getAllScores = (req, res, next) => {
-  Score.find()
+  Score.find({})
+    .sort({ points: -1 })
+    .populate("pangolin_id", "name role")
     .then((scores) => res.status(200).json(scores))
     .catch((error) => res.status(400).json({ error }));
+};
+
+// Read user Score
+exports.getMyScoreById = (req, res, next) => {
+  try {
+    const token = req.headers.authorization;
+    const claims = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+    if (!claims) {
+      return res.status(401).send({
+        message: "Unauthenticated",
+      });
+    }
+
+    Score.findOne({ pangolin_id: claims.id })
+      .populate("pangolin_id", "name role")
+      .then((score) => {
+        res.status(200).json(score);
+      })
+
+      .catch((error) => res.status(400).json({ error }));
+  } catch (err) {
+    console.log(err);
+    return res.status(401).send({
+      message: "Unauthenticated err",
+    });
+  }
+};
+
+// Read ID Score
+exports.getScoreById = (req, res, next) => {
+  try {
+    const token = req.headers.authorization;
+    const claims = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+    if (!claims) {
+      return res.status(401).send({
+        message: "Unauthenticated",
+      });
+    }
+
+    Score.findById(req.params.id)
+      .populate("pangolin_id", "name role")
+      .then((score) => {
+        Friend.findOne({ pangolin_id: claims.id })
+          .populate("friends_id", "name role")
+          .then((friends) => {
+            let scoreWithFriends = score.toObject();
+            scoreWithFriends["friends"] =
+              friends.toObject().friends_id == null
+                ? []
+                : friends.toObject().friends_id;
+
+            res.status(200).json(scoreWithFriends);
+          });
+      })
+
+      .catch((error) => res.status(400).json({ error }));
+  } catch (err) {
+    console.log(err);
+    return res.status(401).send({
+      message: "Unauthenticated err",
+    });
+  }
 };
 
 // Delete Score By ID (pour supression du Pangoin)

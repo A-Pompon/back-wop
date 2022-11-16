@@ -6,8 +6,8 @@ const friendsCtrl = require("../controllers/friends");
 // Read ALL pangolins pour ADMIN
 // router.get("/all", friendsCtrl.getAllFriends);
 
-// Read by ID pangolins
-router.get("/", friendsCtrl.getFriendById);
+// Read friends
+router.get("/", friendsCtrl.getFriends);
 
 // Add by ID pangolins
 router.get("/add/:friend_id", friendsCtrl.addFriendById);

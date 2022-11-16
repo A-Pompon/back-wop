@@ -11,17 +11,12 @@ const { findOne } = require("../models/pangolin");
 // POST - Register user
 exports.registerUser = async (req, res) => {
   try {
-    console.log("====================================");
-    console.log();
-    console.log("====================================");
     if (!utilLogin.validateEmail(req.body.email))
       throw new Error("Email invalide.");
     const email = req.body.email;
     const doesEmailExist = await pangolin.findOne({ email });
-    console.log("====================================");
-    console.log("====================================");
     if (doesEmailExist) {
-      throw new Error("Duplicated email");
+      throw new Error("Email déjà utilisé.");
     }
     if (!utilLogin.validePassword(req.body.password))
       throw new Error("Mot de passe invalide.");
@@ -31,7 +26,6 @@ exports.registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const role = req.body.role;
-    let newPangolin;
     try {
       const pangolin = new Pangolin({
         // ...req.body,
@@ -69,7 +63,7 @@ exports.registerUser = async (req, res) => {
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-    console.log("====================================");
+    console.log("=================REGISTER===================");
     console.log(pangolin);
     console.log("====================================");
   } catch (error) {
@@ -86,6 +80,7 @@ exports.loginUser = async (req, res) => {
       throw new Error("Mot de passe invalide.");
 
     const { email, password } = req.body;
+    console.log(req.body);
     const user = await pangolin.findOne({ email });
     if (user === null)
       return res.status(401).json({ error: "Email invalide." });
@@ -94,11 +89,11 @@ exports.loginUser = async (req, res) => {
     if (!validPassword)
       return res.status(401).json({ error: "Mot de passe invalide." });
     // JWT
+    console.log(user);
     let tokens = jwtTokens.jwtTokens({
-      password: user.password,
-      email: user.email,
+      user_id: user._id,
+      user_email: user.email,
     });
-    // res.cookie("refresh_token", tokens.refreshToken, { httpOnly: true });
     res.json(tokens);
   } catch (error) {
     res.status(401).json({ error: error.message });
@@ -117,8 +112,6 @@ exports.refreshToken = async (req, res) => {
       (error, user) => {
         if (error) return res.status(403).json({ error: error.message });
         let tokens = jwtTokens.jwtTokens(user);
-        // { httpOnly: true, sameSite: 'none', secure:true }
-        // res.cookie("refresh_token", tokens.refreshToken, { httpOnly: true });
         res.json(tokens);
       }
     );

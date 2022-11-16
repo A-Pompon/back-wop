@@ -10,7 +10,7 @@ exports.getAllFriends = (req, res, next) => {
 };
 
 // Read by ID pangolins
-exports.getFriendById = (req, res, next) => {
+exports.getFriends = (req, res, next) => {
   const token = req.headers.authorization;
   const claims = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
   if (!claims) {
@@ -94,14 +94,18 @@ exports.deleteFriendById = (req, res, next) => {
     }
     const filter = { pangolin_id: claims.id };
 
-    const addFriendOption = {
+    const deleteFriendOption = {
       $pull: {
         friends_id: req.params.friend_id,
       },
     };
-    const updateFriendQuery = Friend.findOneAndUpdate(filter, addFriendOption, {
-      new: true,
-    });
+    const updateFriendQuery = Friend.findOneAndUpdate(
+      filter,
+      deleteFriendOption,
+      {
+        new: true,
+      }
+    );
 
     updateFriendQuery
       .then((resultQuery) => {

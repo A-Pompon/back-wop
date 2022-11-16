@@ -2,10 +2,44 @@ const Pangolin = require("../models/pangolin");
 const Score = require("../models/score");
 const Friend = require("../models/friends");
 
+const jwt = require("jsonwebtoken");
+
 const scoreCtrl = require("../controllers/score");
 const friendCtrl = require("../controllers/friends");
 
-// Read ALL pangolins
+// Update Name & Role
+exports.updateName = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization;
+    const claims = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+    if (!claims) {
+      return res.status(401).send({
+        message: "Unauthenticated",
+      });
+    }
+
+    const updateProfile = await Pangolin.findByIdAndUpdate(
+      claims.id,
+      { $set: { name: req.body.name, role: req.body.role } },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    console.log("====================================");
+    console.log(updateProfile);
+    console.log("====================================");
+    res.send(updateProfile);
+  } catch (error) {
+    res.status(400).json({ error });
+    console.log("====================================");
+    console.log(error);
+    console.log("====================================");
+  }
+};
+
+// Read ALL Score pangolins
 exports.getAllPangolins = (req, res, next) => {
   Pangolin.find()
     .then((pangolins) => res.status(200).json(pangolins))
@@ -43,6 +77,38 @@ exports.createPangolin = (name, email, password, role) => {
     .catch((error) => {
       throw error;
     });
+};
+
+// Read ME
+exports.getProfil = (req, res, next) => {
+  try {
+    const token = req.headers.authorization;
+    console.log("==================TOKEN==================");
+    console.log(token);
+    console.log("====================================");
+    const claims = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    if (!claims) {
+      return res.status(401).send({
+        message: "Unauthenticated",
+      });
+    }
+    Pangolin.findById(claims.id)
+      .then((pangolin) => {
+        res.status(200).json(pangolin);
+      })
+      .catch((error) => {
+        res.status(404).json({
+          error: error,
+        });
+      });
+  } catch (error) {
+    console.log("=================403===================");
+    console.log(error);
+    console.log("====================================");
+    res.status(403).json({
+      error: error,
+    });
+  }
 };
 
 // Read by ID pangolins

@@ -6,12 +6,12 @@ exports.validateEmail = (email) => {
 };
 
 exports.validePassword = (password) => {
-  const reg = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
+  const reg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
   return reg.test(password);
 };
 
 exports.valideName = (name) => {
-  const reg = /[A-Za-z0-9]{1}/;
+  const reg = /[A-Za-z0-9]{3,25}/;
   return reg.test(name);
 };
 
