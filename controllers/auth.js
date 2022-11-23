@@ -28,13 +28,12 @@ exports.registerUser = async (req, res) => {
     const role = req.body.role;
     try {
       const pangolin = new Pangolin({
-        // ...req.body,
         name: name,
         email: email,
         password: hashedPassword,
         role: role,
       });
-      console.log(name + "CREATE PANGOLIN");
+      console.log(`Nouveau joueur ${name} rejoind l'aventure`);
       pangolin
         .save()
         .then((ret) => {
@@ -47,9 +46,6 @@ exports.registerUser = async (req, res) => {
             pangolin_id: ret.id,
           });
           friends.save();
-          console.log("====================================");
-          console.log(ret);
-          console.log("====================================");
           let tokens = jwtTokens.jwtTokens({
             user_id: pangolin._id,
             user_email: pangolin.email,
@@ -63,9 +59,6 @@ exports.registerUser = async (req, res) => {
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-    console.log("=================REGISTER===================");
-    console.log(pangolin);
-    console.log("====================================");
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -80,7 +73,6 @@ exports.loginUser = async (req, res) => {
       throw new Error("Mot de passe invalide.");
 
     const { email, password } = req.body;
-    console.log(req.body);
     const user = await pangolin.findOne({ email });
     if (user === null)
       return res.status(401).json({ error: "Email invalide." });
@@ -89,7 +81,6 @@ exports.loginUser = async (req, res) => {
     if (!validPassword)
       return res.status(401).json({ error: "Mot de passe invalide." });
     // JWT
-    console.log(user);
     let tokens = jwtTokens.jwtTokens({
       user_id: user._id,
       user_email: user.email,

@@ -69,7 +69,6 @@ exports.getScoreById = (req, res, next) => {
 
       .catch((error) => res.status(400).json({ error }));
   } catch (err) {
-    console.log(err);
     return res.status(401).send({
       message: "Unauthenticated err",
     });
@@ -155,10 +154,6 @@ exports.winLevelOne = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
     const claims = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    console.log("====================================");
-    console.log(req.headers.authorization);
-    console.log("====================================");
-
     if (!claims) {
       return res.status(401).send({
         message: "Unauthenticated",
@@ -175,10 +170,6 @@ exports.winLevelOne = async (req, res, next) => {
         runValidators: true,
       }
     );
-
-    console.log("====================================");
-    console.log(updatedScore);
-    console.log("====================================");
     res.send(updatedScore);
   } catch (err) {
     console.log(err);

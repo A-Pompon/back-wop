@@ -1,5 +1,4 @@
 const Friend = require("../models/friends");
-const Pangolin = require("../models/pangolin");
 const jwt = require("jsonwebtoken");
 
 // Read ALL pangolins
