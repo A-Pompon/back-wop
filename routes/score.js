@@ -6,7 +6,7 @@ const scoreCtrl = require("../controllers/score");
 // Read ALL scores
 router.get("/", scoreCtrl.getAllScores);
 
-// Read my score
+// Info profil (pour avoir les scores en plus du nom grâce à populate)
 router.get("/profil", scoreCtrl.getMyScoreById);
 
 // ShiFuMi Victories

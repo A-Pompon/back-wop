@@ -1,11 +1,6 @@
 const Pangolin = require("../models/pangolin");
-const Score = require("../models/score");
-const Friend = require("../models/friends");
 
 const jwt = require("jsonwebtoken");
-
-const scoreCtrl = require("../controllers/score");
-const friendCtrl = require("../controllers/friends");
 
 // Read ME
 exports.getProfil = (req, res, next) => {
@@ -56,9 +51,6 @@ exports.updateName = async (req, res, next) => {
     res.send(updateProfile);
   } catch (error) {
     res.status(400).json({ error });
-    console.log("=================UPDATE NAME ERROR===================");
-    console.log(error);
-    console.log("====================================");
   }
 };
 
